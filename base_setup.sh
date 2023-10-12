@@ -15,3 +15,7 @@ pip3 install qrcode[pil]
 # Install XlsxWriter library
 echo "Installing XlsxWriter library..."
 pip3 install xlsxwriter
+
+# Install Openyxl library
+echo "Installing Openpyxl..."
+pip3 install openpyxl

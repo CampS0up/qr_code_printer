@@ -10,6 +10,7 @@ import datetime
 from datetime import datetime
 import openpyxl
 from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 def generate_qr_code(name_of_part, date, part_num, badge_number):
     # Create a QR code object
@@ -51,6 +52,8 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
     datasheetname = f"Data_for_{get_date('%m_%d_%Y')}.xlsx"
 
+    date = get_date("%m-%d-%Y")
+
     # Create a new workbook if the file does not exist
     if not os.path.isfile(datasheetname):
         workbook = Workbook()
@@ -58,9 +61,15 @@ def add_data_to_excel(name_of_part, date, part_number, badge_number):
 
         # Write the headers to the first row
         worksheet.cell(row=1, column=1, value='Name of Part')
-        worksheet.cell(row=1, column=2, value='Date')
+        worksheet.cell(row=1, column=2, value='Date   ')
         worksheet.cell(row=1, column=3, value='Part Number')
         worksheet.cell(row=1, column=4, value='Badge Number')
+        
+        # Auto fit the columns
+        for column in worksheet.columns:
+            max_length = max(len(str(cell.value)) for cell in column)
+            adjusted_width = (max_length + 2) * 1.2
+            worksheet.column_dimensions[get_column_letter(column[0].column)].width = adjusted_width
 
         # Save the workbook
         workbook.save(datasheetname)
