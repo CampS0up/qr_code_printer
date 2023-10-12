@@ -3,6 +3,8 @@ from PIL import Image
 import time
 import xlsxwriter
 import os
+import sys
+import datetime
 
 def generate_qr_code(name_of_part, date, part_number, badge_number):
     qr = qrcode.QRCode(
@@ -17,7 +19,7 @@ def generate_qr_code(name_of_part, date, part_number, badge_number):
     img = qr.make_image(fill_color="black", back_color="white")
     img.save("qr_code.png")
 
-def add_data_to_excel(name_of_part, time, date, part_number, badge_number):
+def add_data_to_excel(name_of_part, date, part_number, badge_number):
     workbook = xlsxwriter.Workbook('data.xlsx')
     worksheet = workbook.add_worksheet()
 
@@ -40,6 +42,25 @@ def print_qr_code():
     os.system("lp -d 'Printer Name' qr_code.png")
 
 # Example usage
-generate_qr_code("Part Name", time.strftime("%H:%M:%S"), time.strftime("%m.%d.%Y"), 1, 12345)
-add_data_to_excel("Part Name", time.strftime("%H:%M:%S"), time.strftime("%m.%d.%Y"), 1, 12345)
+generate_qr_code("Part Name", time.strftime("%m.%d.%Y"), 1, 12345)
+add_data_to_excel("Part Name", time.strftime("%m.%d.%Y"), 1, 12345)
 print_qr_code()
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python qrcode.py generate|all")
+        return
+
+    command = sys.argv[1]
+
+    if command == "generate":
+        data = input("Lol ")
+        generate_qr_code(data)
+        print("QR code generated successfully.")
+    elif command == "all":
+        print("This command will do all the tasks.")
+    else:
+        print("Invalid command. Please use 'generate' or 'all'.")
+
+if __name__ == "__main__":
+    main()
