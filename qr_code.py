@@ -51,11 +51,12 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
 
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
     datasheetname = f"Data_for_{get_date('%m_%d_%Y')}.xlsx"
+    datasheet_path = os.path.join("excel_data", datasheetname)
 
     date = get_date("%m-%d-%Y")
 
     # Create a new workbook if the file does not exist
-    if not os.path.isfile(datasheetname):
+    if not os.path.isfile(datasheet_path):
         workbook = Workbook()
         worksheet = workbook.active
 
@@ -72,11 +73,11 @@ def add_data_to_excel(name_of_part, date, part_number, badge_number):
             worksheet.column_dimensions[get_column_letter(column[0].column)].width = adjusted_width
 
         # Save the workbook
-        workbook.save(datasheetname)
+        workbook.save(datasheet_path)
 
     # Append the data to the existing workbook
     else:
-        workbook = openpyxl.load_workbook(datasheetname)
+        workbook = openpyxl.load_workbook(datasheet_path)
         worksheet = workbook.active
 
         # Get the next available row
@@ -89,7 +90,7 @@ def add_data_to_excel(name_of_part, date, part_number, badge_number):
         worksheet.cell(row=row, column=4, value=badge_number)
 
         # Save the workbook
-        workbook.save(datasheetname)
+        workbook.save(datasheet_path)
 
 def print_qr_code():
     os.system("lp -d 'Printer Name' qr_code.png")
