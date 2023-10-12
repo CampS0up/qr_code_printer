@@ -104,12 +104,12 @@ def generate_part_number():
     return sequence_number
 
 def main():
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         print("Usage: python qrcode.py generate|all")
         return
 
     command = sys.argv[1]
-    name = input("Input Part Name:")
+    name = sys.argv[2]
     date = get_date()
     part_num = generate_part_number()
     badge_number = 1
