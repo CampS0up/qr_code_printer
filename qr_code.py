@@ -82,20 +82,31 @@ def get_date():
 
 # Generates the part number, puts it into a log file, updates each day
 def generate_part_number():
-    # Open the log file in read mode
-    with open('log.txt', 'r') as file:
-        # Read the last line of the log file
-        last_line = file.readlines()[-1]
-    
     # Extract the sequence number from the last line
-    if last_line.split()[-2] == get_date():
-        sequence_number = int(last_line.split()[-1]) + 1
-    else:
+    try:
+        # Open the log file in read mode
+        with open('log.txt', 'r') as file:
+            
+            # Read the last line of the log file
+            last_line = file.readlines()[-1]
+
+        # Extract the sequence number from the last line
+        if last_line.split()[-2] == get_date():
+            sequence_number = int(last_line.split()[-1]) + 1
+
+        else:
+            os.remove('log.txt')
+            with open('log.txt', 'a') as file:
+                file.write(f"This is the log file for {get_date()} \n")
+                file.write("______________________________________________________________________\n")
+            sequence_number = 1
+
+    except IndexError:
         os.remove('log.txt')
         with open('log.txt', 'a') as file:
             file.write(f"This is the log file for {get_date()} \n")
             file.write("______________________________________________________________________\n")
-        sequence_number = 1
+        sequence_number=1
     # Generate the part number
     part_number = f"{sequence_number}-{get_date()}"
     
