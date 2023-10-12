@@ -29,22 +29,23 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
     width, height = img.size
 
     # Create a new image object with the size of the QR code and the name of the part
-    new_img = Image.new("RGB", (width, height + 100), (255, 255, 255))
+    new_img = Image.new("RGB", (width, height + 20), (255, 255, 255))
 
     # Paste the QR code image onto the new image object
-    new_img.paste(img, (0, 100))
+    new_img.paste(img, (0, 20))
 
     # Create a text object with the name of the part.
-    text = Image.new("RGB", (width, 100), (255, 255, 255))
+    text = Image.new("RGB", (width, 35), (255, 255, 255))
     draw = ImageDraw.Draw(text)
-    font = ImageFont.truetype("DejaVuSans", 24)
-    draw.text((0, 0), name_of_part, font=font, fill=(255, 255, 255))
+    font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf", 24)
+    draw.text(((width-len(name_of_part)*12)/2, 10), name_of_part, font=font, fill=(0, 0, 0))
 
     # Paste the text object onto the new image object
     new_img.paste(text, (0, 0))
 
     # Save the new image object as a PNG file
     new_img.save("qr_code.png")
+
 
 
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
@@ -111,7 +112,7 @@ def main():
         return
 
     command = sys.argv[1]
-    name = "lol"
+    name = input("lol")
     date = get_date()
     part_num = generate_part_number()
     badge_number = 1
