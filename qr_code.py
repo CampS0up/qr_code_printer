@@ -130,7 +130,7 @@ def generate_part_number():
     except IndexError:
         os.remove('log.txt')
         with open('log.txt', 'a') as file:
-            file.write(f"This is the log file for {'%m-%d-%Y'} \n")
+            file.write(f"This is the log file for {get_date('%m-%d-%Y')} \n")
             file.write("______________________________________________________________________\n")
         sequence_number=1
     # Generate the part number
