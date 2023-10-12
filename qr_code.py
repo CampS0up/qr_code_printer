@@ -49,7 +49,7 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
     new_img.save("qr_code.png")
 
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
-    datasheetname = f"Data_for_{get_date()}.xlsx"
+    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}.xlsx"
 
     # Create a new workbook if the file does not exist
     if not os.path.isfile(datasheetname):
@@ -90,11 +90,11 @@ def print_qr_code():
     #add_data_to_excel("Part Name", time.strftime("%m.%d.%Y"), 1, 12345)
     #print_qr_code()
 
-def get_date():
+def get_date(format="%m%d%Y"):
     # Get the current date and time
     current_date_time = datetime.now()
     # Format the date as 'mmddyyyy'
-    formatted_date = current_date_time.strftime('%m%d%Y')
+    formatted_date = current_date_time.strftime(format)
     return formatted_date
 
 # Generates the part number, puts it into a log file, updates each day
@@ -114,14 +114,14 @@ def generate_part_number():
         else:
             os.remove('log.txt')
             with open('log.txt', 'a') as file:
-                file.write(f"This is the log file for {get_date()} \n")
+                file.write(f"This is the log file for {get_date('%m-%d-%Y')} \n")
                 file.write("______________________________________________________________________\n")
             sequence_number = 1
 
     except IndexError:
         os.remove('log.txt')
         with open('log.txt', 'a') as file:
-            file.write(f"This is the log file for {get_date()} \n")
+            file.write(f"This is the log file for {'%m-%d-%Y'} \n")
             file.write("______________________________________________________________________\n")
         sequence_number=1
     # Generate the part number
