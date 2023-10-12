@@ -91,6 +91,10 @@ def generate_part_number():
     if last_line.split()[-2] == get_date():
         sequence_number = int(last_line.split()[-1]) + 1
     else:
+        os.remove('log.txt')
+        with open('log.txt', 'a') as file:
+            file.write(f"This is the log file for {get_date()} \n")
+            file.write("______________________________________________________________________\n")
         sequence_number = 1
     # Generate the part number
     part_number = f"{sequence_number}-{get_date()}"
