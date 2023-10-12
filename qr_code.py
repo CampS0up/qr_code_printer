@@ -8,6 +8,8 @@ import os
 import sys
 import datetime
 from datetime import datetime
+import openpyxl
+from openpyxl import Workbook
 
 def generate_qr_code(name_of_part, date, part_num, badge_number):
     # Create a QR code object
@@ -47,23 +49,38 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
     new_img.save("qr_code.png")
 
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
-    workbook = xlsxwriter.Workbook('data.xlsx')
-    worksheet = workbook.add_worksheet()
+    datasheetname = f"Data_for_{get_date()}.xlsx"
 
-    worksheet.write('A1', 'Name of Part')
-    worksheet.write('B1', 'Date')
-    worksheet.write('C1', 'Part Number')
-    worksheet.write('D1', 'Badge Number')
+    # Create a new workbook if the file does not exist
+    if not os.path.isfile(datasheetname):
+        workbook = Workbook()
+        worksheet = workbook.active
 
-    row = 1
-    col = 0
+        # Write the headers to the first row
+        worksheet.cell(row=1, column=1, value='Name of Part')
+        worksheet.cell(row=1, column=2, value='Date')
+        worksheet.cell(row=1, column=3, value='Part Number')
+        worksheet.cell(row=1, column=4, value='Badge Number')
 
-    worksheet.write(row, col,     name_of_part)
-    worksheet.write(row, col + 1, date)
-    worksheet.write(row, col + 2, part_number)
-    worksheet.write(row, col + 3, badge_number)
+        # Save the workbook
+        workbook.save(datasheetname)
 
-    workbook.close()
+    # Append the data to the existing workbook
+    else:
+        workbook = openpyxl.load_workbook(datasheetname)
+        worksheet = workbook.active
+
+        # Get the next available row
+        row = (worksheet.max_row + 1)
+
+        # Write the data to the next available row
+        worksheet.cell(row=row, column=1, value=name_of_part)
+        worksheet.cell(row=row, column=2, value=date)
+        worksheet.cell(row=row, column=3, value=part_number)
+        worksheet.cell(row=row, column=4, value=badge_number)
+
+        # Save the workbook
+        workbook.save(datasheetname)
 
 def print_qr_code():
     os.system("lp -d 'Printer Name' qr_code.png")
