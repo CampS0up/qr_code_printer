@@ -46,8 +46,6 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
     # Save the new image object as a PNG file
     new_img.save("qr_code.png")
 
-
-
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
     workbook = xlsxwriter.Workbook('data.xlsx')
     worksheet = workbook.add_worksheet()
@@ -82,37 +80,36 @@ def get_date():
     formatted_date = current_date_time.strftime('%m%d%Y')
     return formatted_date
 
+# Generates the part number, puts it into a log file, updates each day
 def generate_part_number():
-    # Get the current date.
-    today = get_date()
-    
-    # Open the log file to read the previous part numbers
+    # Open the log file in read mode
     with open('log.txt', 'r') as file:
-        lines = file.readlines()
+        # Read the last line of the log file
+        last_line = file.readlines()[-1]
     
-    # Check if a part has been made for that date
-    sequence_number = 0
-    for line in lines:
-        if today in line:
-            sequence_number = int(line.split()[-1]) + 1
-            break
-    
+    # Extract the sequence number from the last line
+    if last_line.split()[-2] == get_date():
+        sequence_number = int(last_line.split()[-1]) + 1
+    else:
+        sequence_number = 1
     # Generate the part number
-    part_number = today + '0000'.zfill(4 - len(str(sequence_number))) + str(sequence_number)
+    part_number = f"{sequence_number}-{get_date()}"
     
-    # Write the new part number to the log file
+    # Open the log file in append mode
     with open('log.txt', 'a') as file:
-        file.write(f"{today} {sequence_number}\n")
+        # Write the new part number to the log file
+        file.write(f"{get_date()} {sequence_number}\n")
     
-    # Return the part number.
-    return part_number
+    # Return the part number
+    return sequence_number
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python qrcode.py generate|all")
         return
 
     command = sys.argv[1]
-    name = input("lol")
+    name = input("Input Part Name:")
     date = get_date()
     part_num = generate_part_number()
     badge_number = 1
