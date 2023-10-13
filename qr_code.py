@@ -144,17 +144,17 @@ def generate_part_number():
         file.write(f"{get_date()} {get_shift()} {sequence_number}\n")
     
     # Return the part number
-    return sequence_number
+    return (f"{get_date()}{get_shift()}{sequence_number}\n")
 
 def get_shift():
   # Get the current time
   now = datetime.now()
   # Check if the current time is between 4:30 AM and 5 PM
   if now.hour >= 4 and now.hour < 17:
-    return "day"
+    return "D"
   # Otherwise, the current time must be between 5 PM and 4:30 AM
   else:
-    return "night"
+    return "N"
 
 def main():
     if len(sys.argv) < 3:
@@ -166,6 +166,7 @@ def main():
     date = get_date()
     part_num = generate_part_number()
     badge_number = 1
+    shift = get_shift()
     if command == "generate":
         generate_qr_code(name, date, part_num, badge_number)
         print("QR code generated successfully.")
