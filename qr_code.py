@@ -144,7 +144,7 @@ def generate_part_number():
         file.write(f"{get_date()} {get_shift()} {sequence_number}\n")
     
     # Return the part number
-    return (f"{get_date()}{get_shift()}{sequence_number}\n")
+    return (f"{get_date()}{get_shift()}{sequence_number}")
 
 def get_shift():
   # Get the current time
