@@ -107,7 +107,6 @@ def get_date(format="%m%d%Y"):
     formatted_date = current_date_time.strftime(format)
     return formatted_date
 
-# Generates the part number, puts it into a log file, updates each day
 def generate_part_number():
     # Extract the sequence number from the last line
     try:
@@ -118,7 +117,7 @@ def generate_part_number():
             last_line = file.readlines()[-1]
 
         # Extract the sequence number from the last line
-        if last_line.split()[-2] == get_date():
+        if last_line.split()[-3] == get_date() and last_line.split()[-2] == get_shift():
             sequence_number = int(last_line.split()[-1]) + 1
 
         else:
@@ -134,16 +133,28 @@ def generate_part_number():
             file.write(f"This is the log file for {get_date('%m-%d-%Y')} \n")
             file.write("______________________________________________________________________\n")
         sequence_number=1
+
     # Generate the part number
-    part_number = f"{sequence_number}-{get_date()}"
+    part_number = f"{get_date()} {get_shift()} {sequence_number}\n"
     
     # Open the log file in append mode
     with open('log.txt', 'a') as file:
+
         # Write the new part number to the log file
-        file.write(f"{get_date()} {sequence_number}\n")
+        file.write(f"{get_date()} {get_shift()} {sequence_number}\n")
     
     # Return the part number
     return sequence_number
+
+def get_shift():
+  # Get the current time
+  now = datetime.now()
+  # Check if the current time is between 4:30 AM and 5 PM
+  if now.hour >= 4 and now.hour < 17:
+    return "day"
+  # Otherwise, the current time must be between 5 PM and 4:30 AM
+  else:
+    return "night"
 
 def main():
     if len(sys.argv) < 3:
