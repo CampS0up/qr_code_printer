@@ -8,6 +8,9 @@ import os
 import sys
 import datetime
 from datetime import datetime
+import openpyxl
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 def generate_qr_code(name_of_part, date, part_num, badge_number):
     # Create a QR code object
@@ -47,23 +50,47 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
     new_img.save("qr_code.png")
 
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
-    workbook = xlsxwriter.Workbook('data.xlsx')
-    worksheet = workbook.add_worksheet()
+    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}.xlsx"
+    datasheet_path = os.path.join("excel_data", datasheetname)
 
-    worksheet.write('A1', 'Name of Part')
-    worksheet.write('B1', 'Date')
-    worksheet.write('C1', 'Part Number')
-    worksheet.write('D1', 'Badge Number')
+    date = get_date("%m-%d-%Y")
 
-    row = 1
-    col = 0
+    # Create a new workbook if the file does not exist
+    if not os.path.isfile(datasheet_path):
+        workbook = Workbook()
+        worksheet = workbook.active
 
-    worksheet.write(row, col,     name_of_part)
-    worksheet.write(row, col + 1, date)
-    worksheet.write(row, col + 2, part_number)
-    worksheet.write(row, col + 3, badge_number)
+        # Write the headers to the first row
+        worksheet.cell(row=1, column=1, value='Name of Part')
+        worksheet.cell(row=1, column=2, value='Date   ')
+        worksheet.cell(row=1, column=3, value='Part Number')
+        worksheet.cell(row=1, column=4, value='Badge Number')
+        
+        # Auto fit the columns
+        for column in worksheet.columns:
+            max_length = max(len(str(cell.value)) for cell in column)
+            adjusted_width = (max_length + 2) * 1.2
+            worksheet.column_dimensions[get_column_letter(column[0].column)].width = adjusted_width
 
-    workbook.close()
+        # Save the workbook
+        workbook.save(datasheet_path)
+
+    # Append the data to the existing workbook
+    else:
+        workbook = openpyxl.load_workbook(datasheet_path)
+        worksheet = workbook.active
+
+        # Get the next available row
+        row = (worksheet.max_row + 1)
+
+        # Write the data to the next available row
+        worksheet.cell(row=row, column=1, value=name_of_part)
+        worksheet.cell(row=row, column=2, value=date)
+        worksheet.cell(row=row, column=3, value=part_number)
+        worksheet.cell(row=row, column=4, value=badge_number)
+
+        # Save the workbook
+        workbook.save(datasheet_path)
 
 def print_qr_code():
     os.system("lp -d 'Printer Name' qr_code.png")
@@ -73,14 +100,13 @@ def print_qr_code():
     #add_data_to_excel("Part Name", time.strftime("%m.%d.%Y"), 1, 12345)
     #print_qr_code()
 
-def get_date():
+def get_date(format="%m%d%Y"):
     # Get the current date and time
     current_date_time = datetime.now()
     # Format the date as 'mmddyyyy'
-    formatted_date = current_date_time.strftime('%m%d%Y')
+    formatted_date = current_date_time.strftime(format)
     return formatted_date
 
-# Generates the part number, puts it into a log file, updates each day
 def generate_part_number():
     # Extract the sequence number from the last line
     try:
@@ -91,32 +117,44 @@ def generate_part_number():
             last_line = file.readlines()[-1]
 
         # Extract the sequence number from the last line
-        if last_line.split()[-2] == get_date():
+        if last_line.split()[-3] == get_date() or last_line.split()[-2] == get_shift():
             sequence_number = int(last_line.split()[-1]) + 1
 
         else:
             os.remove('log.txt')
             with open('log.txt', 'a') as file:
-                file.write(f"This is the log file for {get_date()} \n")
+                file.write(f"This is the log file for {get_date('%m-%d-%Y')} \n")
                 file.write("______________________________________________________________________\n")
             sequence_number = 1
 
     except IndexError:
         os.remove('log.txt')
         with open('log.txt', 'a') as file:
-            file.write(f"This is the log file for {get_date()} \n")
+            file.write(f"This is the log file for {get_date('%m-%d-%Y')} \n")
             file.write("______________________________________________________________________\n")
         sequence_number=1
+
     # Generate the part number
-    part_number = f"{sequence_number}-{get_date()}"
+    part_number = f"{get_date()} {get_shift()} {sequence_number}\n"
     
     # Open the log file in append mode
     with open('log.txt', 'a') as file:
+
         # Write the new part number to the log file
-        file.write(f"{get_date()} {sequence_number}\n")
+        file.write(f"{get_date()} {get_shift()} {sequence_number}\n")
     
     # Return the part number
     return sequence_number
+
+def get_shift():
+  # Get the current time
+  now = datetime.now()
+  # Check if the current time is between 4:30 AM and 5 PM
+  if now.hour >= 4 and now.hour < 17:
+    return "day"
+  # Otherwise, the current time must be between 5 PM and 4:30 AM
+  else:
+    return "night"
 
 def main():
     if len(sys.argv) < 3:
