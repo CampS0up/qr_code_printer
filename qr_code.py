@@ -117,7 +117,7 @@ def generate_part_number():
             last_line = file.readlines()[-1]
 
         # Extract the sequence number from the last line
-        if last_line.split()[-3] == get_date() and last_line.split()[-2] == get_shift():
+        if last_line.split()[-3] == get_date() or last_line.split()[-2] == get_shift():
             sequence_number = int(last_line.split()[-1]) + 1
 
         else:
