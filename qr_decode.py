@@ -5,8 +5,8 @@ import sys
 import pyzbar.pyzbar as pyzbar
 
 # Setup camera capture
-cap = cv2.VideoCapture(1)
-cap.open(1)
+cap = cv2.VideoCapture()
+cap.open("http://10.183.44.176:8000/")
 cap.set(3, 640)  # set width
 cap.set(4, 480)  # set height
 # Check if argument is true
@@ -25,6 +25,9 @@ if sys.argv[1] == "true":
         # Display image
         cv2.imshow('test', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            # Release camera
+            cap.release()
             break
 else:
     # Read image file
