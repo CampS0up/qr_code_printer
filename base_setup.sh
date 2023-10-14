@@ -24,3 +24,11 @@ pip3 install openpyxl
 echo "Installing pyzbar"
 sudo apt install libzbar0
 pip3 install pyzbar opencv-python
+
+# Install CUPS and hplip
+echo "Installing CUPS and hplip"
+sudo apt install cups hplip
+
+# Install Printer stuff
+sudo apt install linux-tools-5.4.0-77-generic hwdata
+sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/5.4.0-77-generic/usbip 20
