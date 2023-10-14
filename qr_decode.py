@@ -2,7 +2,7 @@
 
 import cv2 
 import sys
-import pyzbar.pyzbar as pyzbar
+from pyzbar.pyzbar import decode
 
 # Setup camera capture
 cap = cv2.VideoCapture()
@@ -13,10 +13,9 @@ cap.set(4, 480)  # set height
 if sys.argv[1] == "true":
     while True:
         # Read frame from camera
-        ret, img = cap.read()
+        success, img = cap.read()
         # Decode QR code or barcode
-        codes = pyzbar.decode(img)
-        for code in codes:
+        for code in decode(img):
             type = code.type
             if type == "QRCODE":
                 print(code.data.decode('utf-8'))
@@ -25,9 +24,6 @@ if sys.argv[1] == "true":
         # Display image
         cv2.imshow('test', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            cv2.destroyAllWindows()
-            # Release camera
-            cap.release()
             break
 else:
     # Read image file
