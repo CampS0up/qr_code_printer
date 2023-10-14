@@ -19,3 +19,8 @@ pip3 install xlsxwriter
 # Install Openyxl library
 echo "Installing Openpyxl..."
 pip3 install openpyxl
+
+# Install Opencv and pyzbar libraries
+echo "Installing pyzbar"
+sudo apt install libzbar0
+pip3 install pyzbar opencv-python
