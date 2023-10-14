@@ -31,9 +31,9 @@ def camera_decode(type):
                 if type == "part":
                     print(code.data.decode('utf-8'))
                     print("Code read input next code")
-                    with open("part_num.txt", "w") as f:
-                        f.write(code.data.decode('utf-8'))
-                        done = 1
+                    with open("part_num.txt", "a") as f:
+                        f.write(f"{code.data.decode('utf-8')}\n")
+                        done = 0
                 if type == "badge":
                     print ("Employee ID: ")
                     employee_id = code.data.decode("utf-8")
@@ -41,8 +41,8 @@ def camera_decode(type):
                     print("Start scanning")
                     # Save the ID to a txt file
                     with open("employee_id.txt", "w") as f:
-                        f.write(employee_id)
-                        done = 1
+                        f.write(f"{employee_id}")
+                        done = 0
             # Display image
             cv2.imshow('test', img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -79,23 +79,24 @@ def add_decoded_to_excel(name_of_assembly):
 
     date = get_date("%m-%d-%Y")
     badge_number = get_badge_number()
+    
     # Create a new workbook if the file does not exist
     if not os.path.isfile(datasheet_path):
         workbook = Workbook()
         worksheet = workbook.active
 
         # Write the headers to the first row
-        worksheet.cell(row=1, column=1, value=name_of_assembly)
-        worksheet.cell(row=1, column=2, value='Date   ')
+        worksheet.cell(row=1, column=1, value='Assembly Name')
+        worksheet.cell(row=1, column=2, value='Date')
         worksheet.cell(row=1, column=3, value='Badge Number')
-        worksheet.cell(row=1, column=3, value='Rear_profile')
-        worksheet.cell(row=1, column=4, value='LH_Side_profile')
-        worksheet.cell(row=1, column=5, value='RH_Side_profile')
-        worksheet.cell(row=1, column=6, value='Canister_Assembly')
-        worksheet.cell(row=1, column=7, value='Canister_and_Carpet_Assembly')
-        worksheet.cell(row=1, column=8, value='Lid_Assembly')
-        worksheet.cell(row=1, column=9, value='Part_7')
-        worksheet.cell(row=1, column=10, value='Part_8')
+        worksheet.cell(row=1, column=4, value='Rear_profile')
+        worksheet.cell(row=1, column=5, value='LH_Side_profile')
+        worksheet.cell(row=1, column=6, value='RH_Side_profile')
+        worksheet.cell(row=1, column=7, value='Canister_Assembly')
+        worksheet.cell(row=1, column=8, value='Canister_and_Carpet_Assembly')
+        worksheet.cell(row=1, column=9, value='Lid_Assembly')
+        worksheet.cell(row=1, column=10, value='Part_7')
+        worksheet.cell(row=1, column=11, value='Part_8')
         
         # Auto fit the columns
         for column in worksheet.columns:
@@ -107,42 +108,42 @@ def add_decoded_to_excel(name_of_assembly):
         workbook.save(datasheet_path)
 
     # Append the data to the existing workbook
-    else:
+    if os.path.isfile(datasheet_path):
         workbook = openpyxl.load_workbook(datasheet_path)
         worksheet = workbook.active
 
         # Get the next available row
         row = (worksheet.max_row + 1)
+        worksheet.cell(row=row, column=1, value=name_of_assembly)
         worksheet.cell(row=row, column=2, value=date)
         worksheet.cell(row=row, column=3, value=badge_number)
         
-        #Open up part_num file
+        # Open and read the part_num.txt file
         with open("part_num.txt", "r") as f:
             lines = f.readlines()
 
+        # Loop over each line in the file
         for line in lines:
-        # Split the line into name, date, number, and badge
+            # Split the line into name, date, number, and badge
             name, date_unused, number, badge_unused = line.split(",")
-            date_unused = badge_unused
-            badge_unused = date_unused
-
-        # Write the data to the next available row
-        if name == "Rear_profile":
-            worksheet.cell(row=row, column=3, value=number)
-        if name == "LH_Side_profile":
-            worksheet.cell(row=row, column=4, value=number)
-        if name == "RH_Side_profile":
-            worksheet.cell(row=row, column=5, value=number)
-        if name == "Canister_Assembly":
-            worksheet.cell(row=row, column=6, value=number)
-        if name == "Canister_and_Carpet_Assembly":
-            worksheet.cell(row=row, column=7, value=number)
-        if name == "Lid_Assembly":
-            worksheet.cell(row=row, column=8, value=number)
-        if name == "Part_7":
-            worksheet.cell(row=row, column=9, value=number)
-        if name == "Part_8":
-            worksheet.cell(row=row, column=10, value=number)
+            
+            # Write the data to the next available row based on the name
+            if name == "Rear_profile":
+                worksheet.cell(row=row, column=4, value=number)
+            elif name == "LH_Side_profile":
+                worksheet.cell(row=row, column=5, value=number)
+            elif name == "RH_Side_profile":
+                worksheet.cell(row=row, column=6, value=number)
+            elif name == "Canister_Assembly":
+                worksheet.cell(row=row, column=7, value=number)
+            elif name == "Canister_and_Carpet_Assembly":
+                worksheet.cell(row=row, column=8, value=number)
+            elif name == "Lid_Assembly":
+                worksheet.cell(row=row, column=9, value=number)
+            elif name == "Part_7":
+                worksheet.cell(row=row, column=10, value=number)
+            elif name == "Part_8":
+                worksheet.cell(row=row, column=11, value=number)
 
         # Save the workbook
         workbook.save(datasheet_path)
@@ -152,6 +153,13 @@ def get_badge_number():
     first_line = f.readline()
   return first_line.strip()
 
+def clear_part_num_file():
+    try:
+        with open("part_num.txt", "w") as f:
+            f.truncate(0)
+        print("part_num.txt file has been cleared.")
+    except FileNotFoundError:
+        print("part_num.txt file not found.")
 
 def main():
     if len(sys.argv) < 2:
@@ -167,6 +175,7 @@ def main():
     elif command == "excel":
         add_decoded_to_excel(name)
         print("Data added successfully.")
+        clear_part_num_file()
     elif command == "all":
         print("This command will do all the tasks.")
     else:
