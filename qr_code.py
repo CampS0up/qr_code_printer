@@ -155,6 +155,11 @@ def get_shift():
   # Otherwise, the current time must be between 5 PM and 4:30 AM
   else:
     return "N"
+  
+def get_badge_number():
+    with open("employee_id.txt", "r") as file:
+            content = file.read().strip()
+            return content
 
 def main():
     if len(sys.argv) < 3:
@@ -165,7 +170,7 @@ def main():
     name = sys.argv[2]
     date = get_date()
     part_num = generate_part_number()
-    badge_number = 1
+    badge_number = get_badge_number()
     shift = get_shift()
     if command == "generate":
         generate_qr_code(name, date, part_num, badge_number)
