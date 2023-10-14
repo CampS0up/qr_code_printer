@@ -30,7 +30,7 @@ else:
     img = cv2.imread('qr_code.png')
     # Decode QR code or barcode
     try:
-        codes = pyzbar.decode(img)
+        codes = decode(img)
         for code in codes:
             type = code.type
             if type == "QRCODE":
