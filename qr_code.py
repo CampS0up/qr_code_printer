@@ -50,7 +50,7 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
     new_img.save("qr_code.png")
 
 def create_excel_sheet(name_of_part, date, part_number, badge_number):
-    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}_{name_of_part}.xlsx"
+    datasheetname = f"Part_Data_for_{get_date('%m_%d_%Y')}_{name_of_part}.xlsx"
     datasheet_path = os.path.join("excel_data", datasheetname)
 
     date = get_date("%m-%d-%Y")
@@ -76,7 +76,7 @@ def create_excel_sheet(name_of_part, date, part_number, badge_number):
         workbook.save(datasheet_path)
 
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
-    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}_{name_of_part}.xlsx"
+    datasheetname = f"Part_Data_for_{get_date('%m_%d_%Y')}_{name_of_part}.xlsx"
     datasheet_path = os.path.join("excel_data", datasheetname)
 
     date = get_date("%m-%d-%Y")
