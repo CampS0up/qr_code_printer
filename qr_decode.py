@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import cv2 
+import cv2
 import sys
 from pyzbar.pyzbar import decode
 import time
@@ -79,7 +79,7 @@ def add_decoded_to_excel(name_of_assembly):
 
     date = get_date("%m-%d-%Y")
     badge_number = get_badge_number()
-    
+
     # Create a new workbook if the file does not exist
     if not os.path.isfile(datasheet_path):
         workbook = Workbook()
@@ -97,7 +97,7 @@ def add_decoded_to_excel(name_of_assembly):
         worksheet.cell(row=1, column=9, value='Lid_Assembly')
         worksheet.cell(row=1, column=10, value='Part_7')
         worksheet.cell(row=1, column=11, value='Part_8')
-        
+
         # Auto fit the columns
         for column in worksheet.columns:
             max_length = max(len(str(cell.value)) for cell in column)
@@ -117,7 +117,7 @@ def add_decoded_to_excel(name_of_assembly):
         worksheet.cell(row=row, column=1, value=name_of_assembly)
         worksheet.cell(row=row, column=2, value=date)
         worksheet.cell(row=row, column=3, value=badge_number)
-        
+
         # Open and read the part_num.txt file
         with open("part_num.txt", "r") as f:
             lines = f.readlines()
@@ -126,7 +126,7 @@ def add_decoded_to_excel(name_of_assembly):
         for line in lines:
             # Split the line into name, date, number, and badge
             name, date_unused, number, badge_unused = line.split(",")
-            
+
             # Write the data to the next available row based on the name
             if name == "Rear_profile":
                 worksheet.cell(row=row, column=4, value=number)
@@ -163,7 +163,7 @@ def clear_part_num_file():
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python qrcode.py generate|all")
+        print("Usage: qrcode.py decode|excel|all badge|part")
         return
 
     command = sys.argv[1]
