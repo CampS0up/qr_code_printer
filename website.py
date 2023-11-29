@@ -88,11 +88,26 @@ def list_days():
     all_days = sorted([d for d in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], d))], reverse=True)
     return render_template('days.html', all_days=all_days)
 
-@app.route('/day/<day>', methods=['POST'])
-def view_day(day):
-    day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
-    uploaded_files = os.listdir(day_folder)
-    return render_template('day.html', day=day, uploaded_files=uploaded_files)
+@app.route('/day/<day>', methods=['GET', 'POST'])
+def handle_day(day):
+    if request.method == 'GET':
+        # Handle GET requests (display page, list files, etc.)
+        day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+        uploaded_files = os.listdir(day_folder)
+        return render_template('day.html', day=day, uploaded_files=uploaded_files)
+    elif request.method == 'POST':
+        # Handle POST requests (file upload)
+        if 'file' not in request.files:
+            return "No file part"
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return "No selected file"
+
+        # Your file handling logic here
+
+        return f"File uploaded successfully to {day}"
 
 if __name__ == '__main__':
     # Ensure the 'uploads' folder exists
