@@ -49,8 +49,34 @@ def generate_qr_code(name_of_part, date, part_num, badge_number):
     # Save the new image object as a PNG file
     new_img.save("qr_code.png")
 
+def create_excel_sheet(name_of_part, date, part_number, badge_number):
+    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}_{name_of_part}.xlsx"
+    datasheet_path = os.path.join("excel_data", datasheetname)
+
+    date = get_date("%m-%d-%Y")
+
+    # Create a new workbook if the file does not exist
+    if not os.path.isfile(datasheet_path):
+        workbook = Workbook()
+        worksheet = workbook.active
+
+        # Write the headers to the first row
+        worksheet.cell(row=1, column=1, value='Name of Part')
+        worksheet.cell(row=1, column=2, value='Date   ')
+        worksheet.cell(row=1, column=3, value='Part Number')
+        worksheet.cell(row=1, column=4, value='Badge Number')
+
+        # Auto fit the columns
+        for column in worksheet.columns:
+            max_length = max(len(str(cell.value)) for cell in column)
+            adjusted_width = (max_length + 2) * 1.2
+            worksheet.column_dimensions[get_column_letter(column[0].column)].width = adjusted_width
+
+        # Save the workbook
+        workbook.save(datasheet_path)
+
 def add_data_to_excel(name_of_part, date, part_number, badge_number):
-    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}.xlsx"
+    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}_{name_of_part}.xlsx"
     datasheet_path = os.path.join("excel_data", datasheetname)
 
     date = get_date("%m-%d-%Y")
@@ -176,9 +202,11 @@ def main():
         generate_qr_code(name, date, part_num, badge_number)
         print("QR code generated successfully.")
     elif command == "excel":
+        create_excel_sheet(name, date, part_num, badge_number)
         add_data_to_excel(name, date, part_num, badge_number)
         print("Data added successfully.")
     elif command == "all":
+        create_excel_sheet(name, date, part_num, badge_number)
         generate_qr_code(name, date, part_num, badge_number)
         add_data_to_excel(name, date, part_num, badge_number)
         print("This command will do all the tasks.")
