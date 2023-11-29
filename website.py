@@ -89,6 +89,10 @@ def list_days():
     return render_template('days.html', all_days=all_days)
 
 @app.route('/day/<day>', methods=['GET', 'POST'])
+def view_day(day):
+    day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+    uploaded_files = os.listdir(day_folder)
+    return render_template('day.html', day=day, uploaded_files=uploaded_files)
 def handle_day(day):
     if request.method == 'GET':
         # Handle GET requests (display page, list files, etc.)
