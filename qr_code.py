@@ -65,7 +65,7 @@ def add_data_to_excel(name_of_part, date, part_number, badge_number):
         worksheet.cell(row=1, column=2, value='Date   ')
         worksheet.cell(row=1, column=3, value='Part Number')
         worksheet.cell(row=1, column=4, value='Badge Number')
-        
+
         # Auto fit the columns
         for column in worksheet.columns:
             max_length = max(len(str(cell.value)) for cell in column)
@@ -112,7 +112,7 @@ def generate_part_number():
     try:
         # Open the log file in read mode
         with open('log.txt', 'r') as file:
-            
+
             # Read the last line of the log file
             last_line = file.readlines()[-1]
 
@@ -136,13 +136,13 @@ def generate_part_number():
 
     # Generate the part number
     part_number = f"{get_date()} {get_shift()} {sequence_number}\n"
-    
+
     # Open the log file in append mode
     with open('log.txt', 'a') as file:
 
         # Write the new part number to the log file
         file.write(f"{get_date()} {get_shift()} {sequence_number}\n")
-    
+
     # Return the part number
     return (f"{get_date()}{get_shift()}{sequence_number}")
 
@@ -156,16 +156,21 @@ def get_shift():
   else:
     return "N"
 
+def get_badge_number():
+  with open("employee_id.txt", "r") as f:
+    first_line = f.readline()
+  return first_line.strip()
+
 def main():
     if len(sys.argv) < 3:
-        print("Usage: python qrcode.py generate|all")
+        print("Usage: qrcode.py generate|all")
         return
 
     command = sys.argv[1]
     name = sys.argv[2]
     date = get_date()
     part_num = generate_part_number()
-    badge_number = 1
+    badge_number = get_badge_number()
     shift = get_shift()
     if command == "generate":
         generate_qr_code(name, date, part_num, badge_number)
@@ -174,6 +179,8 @@ def main():
         add_data_to_excel(name, date, part_num, badge_number)
         print("Data added successfully.")
     elif command == "all":
+        generate_qr_code(name, date, part_num, badge_number)
+        add_data_to_excel(name, date, part_num, badge_number)
         print("This command will do all the tasks.")
     else:
         print("Invalid command. Please use 'generate' or 'all'.")
