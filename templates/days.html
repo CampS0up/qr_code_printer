@@ -9,7 +9,7 @@
     <h1>Available Days:</h1>
     <ul>
         {% for day in all_days %}
-            <li><a href="{{ url_for('view_day', day=day) }}">{{ day }}</a></li>
+            <li><a href="{{ url_for('view_day', day=day, additional_param=value) }}">{{ day }}</a></li>
         {% endfor %}
     </ul>
 
