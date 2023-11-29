@@ -28,3 +28,6 @@ pip3 install pyzbar opencv-python
 
 # Install libraries for website
 pip3 install pandas flask werkzeug.utils
+
+# Install needed CLI for cloud stroage of data
+sudo curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
