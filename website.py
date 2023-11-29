@@ -62,7 +62,7 @@ def index():
     uploaded_files = os.listdir(today_folder)
     return render_template('index.html', uploaded_files=uploaded_files)
 
-@app.route('/upload', methods=['POST'])
+@app.route('/uploads', methods=['POST'])
 def upload_file_web():
     # Check if the post request has the file part
     if 'file' not in request.files:
@@ -88,7 +88,7 @@ def list_days():
     all_days = sorted([d for d in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], d))], reverse=True)
     return render_template('days.html', all_days=all_days)
 
-@app.route('/day/<day>')
+@app.route('/day/<day>', methods=['POST'])
 def view_day(day):
     day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
     uploaded_files = os.listdir(day_folder)
