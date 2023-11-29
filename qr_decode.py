@@ -74,7 +74,7 @@ def get_date(format="%m%d%Y"):
     return formatted_date
 
 def add_decoded_to_excel(name_of_assembly):
-    datasheetname = f"Data_for_{get_date('%m_%d_%Y')}_{name_of_assembly}.xlsx"
+    datasheetname = f"Assembly_Data_for_{get_date('%m_%d_%Y')}_{name_of_assembly}.xlsx"
     datasheet_path = os.path.join("excel_data", datasheetname)
 
     date = get_date("%m-%d-%Y")
