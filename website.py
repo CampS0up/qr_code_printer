@@ -96,7 +96,7 @@ def view_day(day):
 def handle_day(day):
     if request.method == 'GET':
         # Handle GET requests (display page, list files, etc.)
-        day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+        day_folder = os.path.join('day', day)
         uploaded_files = os.listdir(day_folder)
         return render_template('day.html', day=day, uploaded_files=uploaded_files)
     elif request.method == 'POST':
