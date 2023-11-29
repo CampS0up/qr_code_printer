@@ -15,8 +15,6 @@ crc16==0.1.1
 cryptography==2.8
 DateTime==5.2
 dbus-python==1.2.16
-distro==1.4.0
-distro-info==0.23+ubuntu1.1
 docopt==0.6.2
 entrypoints==0.3
 et-xmlfile==1.1.0
