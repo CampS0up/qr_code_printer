@@ -4,18 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload and Download</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        h1 {
+            color: #3498db;
+        }
+        p {
+            margin: 20px 0;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            color: #fff;
+            text-decoration: none;
+            background-color: #3498db;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #2980b9;
+        }
+        .message {
+            color: #27ae60;
+        }
+        .error {
+            color: #c0392b;
+        }
+    </style>
 </head>
 <body>
     <h1>Home Page for Files</h1>
 
     {% if message %}
-        <p>{{ message }}</p>
+        <p class="message">{{ message }}</p>
     {% endif %}
 
     {% if error %}
-        <p style="color: red;">{{ error }}</p>
+        <p class="error">{{ error }}</p>
     {% endif %}
 
     <p><a href="{{ url_for('list_days') }}">View Days</a></p>
 </body>
-</html>l>
+</html>
