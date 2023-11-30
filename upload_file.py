@@ -19,6 +19,7 @@ def upload_file_to_heroku(file_path):
     # Upload the file to the specified folder on Heroku
     files = {'file': open(file_path, 'rb')}
     response = requests.post(upload_url, files=files)
+    print(f"{upload_url}")
 
     if response.status_code == 200:
         print(f"File uploaded successfully to Heroku.")

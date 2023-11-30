@@ -90,13 +90,22 @@ def list_days():
 
 @app.route('/day/<day>', methods=['GET', 'POST'])
 def view_day(day):
-    day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
-    uploaded_files = os.listdir(day_folder)
-    return render_template('day.html', day=day, uploaded_files=uploaded_files)
-def handle_day(day):
     if request.method == 'GET':
         # Handle GET requests (display page, list files, etc.)
-        day_folder = os.path.join('day', day)
+        day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+        uploaded_files = os.listdir(day_folder)
+        return render_template('day.html', day=day, uploaded_files=uploaded_files)
+    elif request.method == 'POST':
+        # Handle POST requests (file upload)
+        return handle_day(day)
+def handle_day(day):
+    day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+
+    if not os.path.exists(day_folder) or not os.path.isdir(day_folder):
+        return f"Error: Day folder '{day}' does not exist."
+
+    if request.method == 'GET':
+        # Handle GET requests (display page, list files, etc.)
         uploaded_files = os.listdir(day_folder)
         return render_template('day.html', day=day, uploaded_files=uploaded_files)
     elif request.method == 'POST':
