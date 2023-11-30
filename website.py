@@ -102,12 +102,6 @@ def view_day(day):
         # Handle POST requests (file upload)
         return handle_day(day)
 
-@app.route('/day/<day>/<filename>', methods=['GET'])
-def download_file(filename):
-    today_folder = get_today_folder()
-    file_path = os.path.join(today_folder, filename)
-    return send_from_directory(today_folder, filename, as_attachment=True)
-
 def handle_day(day):
     day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
 
@@ -135,6 +129,12 @@ def handle_day(day):
         uploaded_files = os.listdir(day_folder)
 
         return f"File uploaded successfully to {day}"
+
+@app.route('/day/<day>/<filename>', methods=['GET'])
+def download_file(filename):
+    today_folder = get_today_folder()
+    file_path = os.path.join(today_folder, filename)
+    return send_from_directory(today_folder, filename, as_attachment=True)
 
 if __name__ == '__main__':
     # Ensure the 'uploads' folder exists
