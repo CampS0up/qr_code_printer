@@ -62,27 +62,6 @@ def index():
     uploaded_files = os.listdir(today_folder)
     return render_template('index.html', uploaded_files=uploaded_files)
 
-@app.route('/uploads', methods=['POST'])
-def upload_file_web():
-    # Check if the post request has the file part
-    if 'file' not in request.files:
-        return render_template('index.html', error='No file part')
-
-    file = request.files['file']
-
-    # If the user does not select a file, browser submits an empty part without filename
-    if file.filename == '':
-        return render_template('index.html', error='No selected file')
-
-    result = upload_file(file)
-    return render_template('index.html', message=result)
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    today_folder = get_today_folder()
-    file_path = os.path.join(today_folder, filename)
-    return send_from_directory(today_folder, filename, as_attachment=True)
-
 @app.route('/days')
 def list_days():
     all_days = sorted([d for d in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], d))], reverse=True)
@@ -127,11 +106,6 @@ def handle_day(day):
 
         return f"File uploaded successfully to {day}"
 
-@app.route('/day/<day>/<filename>')
-def download_file(day, filename):
-    today_folder = get_today_folder()
-    file_path = os.path.join(today_folder, filename)
-    return send_from_directory(today_folder, filename, as_attachment=True)
 
 
 if __name__ == '__main__':
