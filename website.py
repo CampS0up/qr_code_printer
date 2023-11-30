@@ -2,7 +2,7 @@
 
 import os
 import sys
-from flask import Flask, render_template, request, send_from_directory, send_file
+from flask import Flask, render_template, request, send_from_directory
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
@@ -22,39 +22,13 @@ def get_today_folder():
     return today_folder
 
 def upload_file(file):
-    if allowed_file(file.name):  # Use file.name instead of file.filename
-        original_filename = secure_filename(file.name)
-
-        # Remove the prefix "excel_data_" if it exists
-        prefix = "excel_data_"
-        if original_filename.startswith(prefix):
-            original_filename = original_filename[len(prefix):]
-
-        filename, file_extension = os.path.splitext(original_filename)
-        filename = f"{filename}{file_extension}"
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
         file_path = os.path.join(get_today_folder(), filename)
-        with open(file_path, 'wb') as f:
-            f.write(file.read())
+        file.save(file_path)
         return f"File '{filename}' uploaded successfully"
     else:
         return "Error: Invalid file or file type"
-
-def process_command_line_argument():
-    if len(sys.argv) == 2:
-        file_path = sys.argv[1]
-        if os.path.exists(file_path):
-            if os.path.isfile(file_path):
-                with open(file_path, 'rb') as file:
-                    result = upload_file(file)
-                    print(result)
-            else:
-                print("Error: Provided path is a directory, not a file.")
-        else:
-            print(f"Error: File '{file_path}' does not exist.")
-        sys.exit(1)
-    elif len(sys.argv) > 2:
-        print("Usage: ./website.py <file.xlsx>")
-        sys.exit(1)
 
 @app.route('/')
 def index():
@@ -62,7 +36,7 @@ def index():
     uploaded_files = os.listdir(today_folder)
     return render_template('index.html', uploaded_files=uploaded_files)
 
-@app.route('/uploads', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def upload_file_web():
     # Check if the post request has the file part
     if 'file' not in request.files:
@@ -88,37 +62,15 @@ def list_days():
     all_days = sorted([d for d in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], d))], reverse=True)
     return render_template('days.html', all_days=all_days)
 
-@app.route('/day/<day>', methods=['GET', 'POST'])
+@app.route('/day/<day>')
 def view_day(day):
-    day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+    day_folder = get_today_folder()
     uploaded_files = os.listdir(day_folder)
     return render_template('day.html', day=day, uploaded_files=uploaded_files)
-def handle_day(day):
-    if request.method == 'GET':
-        # Handle GET requests (display page, list files, etc.)
-        day_folder = os.path.join('day', day)
-        uploaded_files = os.listdir(day_folder)
-        return render_template('day.html', day=day, uploaded_files=uploaded_files)
-    elif request.method == 'POST':
-        # Handle POST requests (file upload)
-        if 'file' not in request.files:
-            return "No file part"
-
-        file = request.files['file']
-
-        if file.filename == '':
-            return "No selected file"
-
-        # Your file handling logic here
-
-        return f"File uploaded successfully to {day}"
 
 if __name__ == '__main__':
     # Ensure the 'uploads' folder exists
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-    # Process command line argument if provided
-    process_command_line_argument()
 
     # Run the Flask application on 0.0.0.0 (all available network interfaces) and port 5001
     app.run(debug=True, host='0.0.0.0', port=5001, use_reloader=False)
