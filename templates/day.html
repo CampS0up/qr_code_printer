@@ -37,7 +37,7 @@
     {% if uploaded_files %}
         <ul>
             {% for file in uploaded_files %}
-                <li><a href="{{ file }}" download>{{ file }}</a></li>
+                <li><a href="/day/{{ day }}/{{ file }}" download>{{ file }}</a></li>
             {% endfor %}
         </ul>
     {% else %}
