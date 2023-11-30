@@ -4,13 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ day }} Files</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        h1 {
+            color: #3498db;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #004080;
+            text-decoration: underline;
+        }
+        .no-files {
+            color: #777;
+        }
+        .back-link {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            color: #fff;
+            text-decoration: none;
+            background-color: #3498db;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .back-link:hover {
+            background-color: #2980b9;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ day }} Files:</h1>
-    <ul>
-        {% for file in uploaded_files %}
-            <li><a href="{{ url_for('download_file', filename=file) }}">{{ file }}</a></li>
-        {% endfor %}
-    </ul>
+    {% if uploaded_files %}
+        <ul>
+            {% for file in uploaded_files %}
+                <li><a href="{{uploaded_files}}/{{ file }}" download>{{ file }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-files">No files uploaded for {{ day }}.</p>
+    {% endif %}
+    <p><a class="back-link" href="{{ url_for('list_days') }}">Back to Days</a></p>
 </body>
 </html>

@@ -9,7 +9,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Set the upload folder and allowed extensions
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'day'
 ALLOWED_EXTENSIONS = {'xlsx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -62,27 +62,6 @@ def index():
     uploaded_files = os.listdir(today_folder)
     return render_template('index.html', uploaded_files=uploaded_files)
 
-@app.route('/uploads', methods=['POST'])
-def upload_file_web():
-    # Check if the post request has the file part
-    if 'file' not in request.files:
-        return render_template('index.html', error='No file part')
-
-    file = request.files['file']
-
-    # If the user does not select a file, browser submits an empty part without filename
-    if file.filename == '':
-        return render_template('index.html', error='No selected file')
-
-    result = upload_file(file)
-    return render_template('index.html', message=result)
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    today_folder = get_today_folder()
-    file_path = os.path.join(today_folder, filename)
-    return send_from_directory(today_folder, filename, as_attachment=True)
-
 @app.route('/days')
 def list_days():
     all_days = sorted([d for d in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], d))], reverse=True)
@@ -90,13 +69,23 @@ def list_days():
 
 @app.route('/day/<day>', methods=['GET', 'POST'])
 def view_day(day):
-    day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
-    uploaded_files = os.listdir(day_folder)
-    return render_template('day.html', day=day, uploaded_files=uploaded_files)
-def handle_day(day):
     if request.method == 'GET':
         # Handle GET requests (display page, list files, etc.)
-        day_folder = os.path.join('day', day)
+        day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+        uploaded_files = os.listdir(day_folder)
+        return render_template('day.html', day=day, uploaded_files=uploaded_files)
+    elif request.method == 'POST':
+        # Handle POST requests (file upload)
+        return handle_day(day)
+
+def handle_day(day):
+    day_folder = os.path.join(app.config['UPLOAD_FOLDER'], day)
+
+    if not os.path.exists(day_folder) or not os.path.isdir(day_folder):
+        return f"Error: Day folder '{day}' does not exist."
+
+    if request.method == 'GET':
+        # Handle GET requests (display page, list files, etc.)
         uploaded_files = os.listdir(day_folder)
         return render_template('day.html', day=day, uploaded_files=uploaded_files)
     elif request.method == 'POST':
@@ -109,9 +98,19 @@ def handle_day(day):
         if file.filename == '':
             return "No selected file"
 
-        # Your file handling logic here
+        # Save the file to the day folder
+        file.save(os.path.join(day_folder, secure_filename(file.filename)))
+
+        # Optionally, you can list the files after the upload
+        uploaded_files = os.listdir(day_folder)
 
         return f"File uploaded successfully to {day}"
+
+@app.route('/day/<day>/<filename>')
+def download_file(day, filename):
+    today_folder = get_today_folder()
+    file_path = os.path.join(today_folder, filename)
+    return send_from_directory(today_folder, filename, as_attachment=True)
 
 if __name__ == '__main__':
     # Ensure the 'uploads' folder exists
