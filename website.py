@@ -128,10 +128,11 @@ def handle_day(day):
         return f"File uploaded successfully to {day}"
 
 @app.route('/day/<day>/<filename>')
-def download_file(filename):
+def download_file(day, filename):
     today_folder = get_today_folder()
     file_path = os.path.join(today_folder, filename)
     return send_from_directory(today_folder, filename, as_attachment=True)
+
 
 if __name__ == '__main__':
     # Ensure the 'uploads' folder exists
