@@ -31,3 +31,11 @@ The purpose of this code is to act as a way to catalog all the items being creat
 1. Use ```./qr_decode.py decode badge``` to parse for a badge number this is then saved to be used later in qr_generation.
 2. Use ```./qr_decode.py decode part``` to decode a qr code and add the data to a part_num file, this file is parsed when using the excel command.
 3. Use ```./qr_decode.py excel "NAME_OF_ASSEMBLY"``` to generate/add data to an assembly excel file by parsing the data in the part_num.txt file.
+
+-----------------------------------------------------------------------------------------------------------------------
+
+**<u>UPLOAD_FILE.PY</u>**
+1. Use ```./upload_file.py FILE``` to upload the data to the website. Each day there will be a new folder generated.
+   (Later will be modified to parse the file name to split to specific dates)
+
+If you want to view the website it is currently housed at ```https://tracability-project-c8e1a60af229.herokuapp.com/```.
