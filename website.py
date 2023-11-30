@@ -9,7 +9,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Set the upload folder and allowed extensions
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'day'
 ALLOWED_EXTENSIONS = {'xlsx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
