@@ -39,3 +39,4 @@ The purpose of this code is to act as a way to catalog all the items being creat
    (Later will be modified to parse the file name to split to specific dates)
 
 If you want to view the website it is currently housed at ```https://tracability-project-c8e1a60af229.herokuapp.com/```.
+To start the dyno and ensure that the dyno is up and running, run this command ```heroku ps:scale web=1```.
